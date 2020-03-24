@@ -12,8 +12,7 @@ from nose.plugins.skip import SkipTest
 
 sys.path.insert( 0, os.path.dirname( os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( sys.argv[0] ) ) ) ) ) )
 
-from dbc_python.net.iserver import IServer
-import dbc_python.net.port_checker as port_checker
+from os_python.common.net.iserver import IServer
 
 logging.disable( logging.ERROR )
 
