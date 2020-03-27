@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   This file is part of opensearch.
+   Copyright © 2009, Dansk Bibliotekscenter a/s,
+   Tempovej 7-11, DK-2750 Ballerup, Denmark. CVR: 15149043
+
+   opensearch is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   opensearch is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with opensearch.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<!-- xsd documenting how to utilize the hive wrapper in test-scenarios. -->
+
+<xsd:schema targetNamespace="http://dbc.dk/xml/namespaces/openagency"
+            xmlns="http://dbc.dk/xml/namespaces/openagency"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            elementFormDefault="qualified">
+
+  <xsd:element name="agency">
+    <xsd:annotation>
+      <xsd:documentation>
+        For setting up openagency settings
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="mockrule" minOccurs="1" maxOccurs="1" type="mockRuleType"/>
+      </xsd:sequence>
+    </xsd:complexType>
+    <xsd:attribute name="agencyid" type="xsd:integer"/>
+  </xsd:element>
+
+  <xsd:complexType name="mockRuleType">
+    <xsd:annotation>
+      <xsd:documentation>
+          Setting up mock rule values. Name is a supported rule and value is true or false
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="name" use="required" type="xsd:string"/>
+    <xsd:attribute name="value" use="required" type="xsd:boolean"/>
+  </xsd:complexType>
+
+</xsd:schema>
+
+
+
