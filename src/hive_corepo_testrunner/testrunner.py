@@ -31,8 +31,8 @@ from os_python.openagency_parser import OpenAgencyParser
 from os_python.connectors.hive import HiveDockerConnector
 from os_python.connectors.openagency_mock import OpenAgencyMock
 
-from dbc_python.utils.init_functions import NullHandler
-from dbc_python.utils.cleanupstack import CleanupStack
+from os_python.common.utils.init_functions import NullHandler
+from os_python.common.utils.cleanupstack import CleanupStack
 
 
 ### define logger

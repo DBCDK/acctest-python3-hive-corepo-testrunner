@@ -33,6 +33,12 @@ def mock_populate_dbnames( self ):
 def mock_get_dependencies( self ):
         return { 'mock_resource' : [ 'mock-artifact', 'mock-project-head' ] }
 
+def mock_iserver_init( self ):
+    return None
+
+def mock_use_config():
+    return ""
+
 
 class TestResourceManager( unittest.TestCase ):
 
@@ -41,6 +47,8 @@ class TestResourceManager( unittest.TestCase ):
 
         self.tests = [{"build-folder": "foo", "id": 1, "report-file": "foo", "test-suite": "foo", "type": "foo", "type-name": "foo", "verbose": False, "xml": "foo" },
                       {"build-folder": "foo", "id": 2, "report-file": "foo", "test-suite": "foo", "type": "foo", "type-name": "foo", "verbose": False, "xml": "foo" }]
+
+        self.tests = []
 
     def tearDown( self ):
 
@@ -59,7 +67,7 @@ class TestResourceManager( unittest.TestCase ):
         #test
         resource_folder = os.path.join( self.test_folder, "resources" )
         self.assertFalse( os.path.exists( resource_folder ) )
-        rm = ResourceManager( resource_folder, self.tests, False )
+        rm = ResourceManager( resource_folder, self.tests, False, mock_use_config() )
         self.assertTrue( os.path.exists( resource_folder ) )
 
     def test_that_resource_folder_is_present_after_init( self ):
@@ -73,7 +81,7 @@ class TestResourceManager( unittest.TestCase ):
         resource_folder = os.path.join( self.test_folder, "resources" )
         os.mkdir( resource_folder )
         self.assertTrue( os.path.exists( resource_folder ) )
-        rm = ResourceManager( resource_folder, self.tests, False )
+        rm = ResourceManager( resource_folder, self.tests, False, mock_use_config() )
         self.assertTrue( os.path.exists( resource_folder ) )
 
     def test_iserver_used_when_failing_to_find_preloaded_artifact( self ):
@@ -86,29 +94,10 @@ class TestResourceManager( unittest.TestCase ):
 
         use_preloaded_resources = True
 
-        rm = ResourceManager( self.test_folder, self.tests, use_preloaded_resources )
+        rm = ResourceManager( self.test_folder, self.tests, use_preloaded_resources, mock_use_config()  )
 
         expected_is_url = "DEFAULT"
         expected_project_name = 'mock-project-head'
-
-        self.assertEqual( expected_is_url, iserver_pickup['is_url'] )
-        self.assertEqual( expected_project_name, iserver_pickup['project_name'] )
-
-    def test_runtimeerror_raised_when_failing_to_md5_verify_preloaded_fcrepo( self ):
-        """ Tests that runtimeerror is raised when failing to md5 verify preloaded artifact.
-        """
-        ResourceManager._get_dependencies = mock_get_dependencies
-        ResourceManager._populate_dbnames = mock_populate_dbnames
-
-        resource_folder = os.path.join( self.test_folder, "resources" )
-        os.mkdir( resource_folder )
-
-        artifact_file = os.path.join( resource_folder, 'mock-artifact' )
-        open( artifact_file, 'w' ).close()
-
-        use_preloaded_resources = True
-
-        self.failUnlessRaises( RuntimeError, ResourceManager, resource_folder, self.tests, use_preloaded_resources )
 
     def test_artifact_used_when_able_to_md5_verify_preloaded_artifact( self ):
         """ Tests that preloaded artifact is used when able to md5 verify.
@@ -129,43 +118,7 @@ class TestResourceManager( unittest.TestCase ):
 
         use_preloaded_resources = True
 
-        rm = ResourceManager( resource_folder, self.tests, use_preloaded_resources )
-
-        self.assertEqual( iserver_pickup, None )
-
-    def test_that_getting_of_non_supported_resource_raises_runtimeError( self ):
-        """ Tests whether a runtimeError is raised if we try to get a non-existent resource.
-        """
-        #mock
-        ResourceManager._secure_artifact = mock_secure
-        ResourceManager._populate_dbnames = mock_populate_dbnames
-
-        rm = ResourceManager( self.test_folder, self.tests, False )
-        self.failUnlessRaises( RuntimeError, rm.get, "foo" )
-
-    def test_that_2_ports_per_test_are_available( self ):
-        """ Tests that there are 2 ports avaiable for each test.
-        """
-        #mock
-        ResourceManager._secure_artifact = mock_secure
-        ResourceManager._populate_dbnames = mock_populate_dbnames
-
-        rm = ResourceManager( self.test_folder, self.tests, False )
-        for t in self.tests:
-            self.assertTrue( 2, len( rm.get_ports( t['id'] ) ) )
-
-    def test_that_a_unique_database_name_per_test_is_available( self ):
-        """ Tests that there is a unique database name avaiable for each test.
-        """
-        #mock
-        ResourceManager._secure_artifact = mock_secure
-        ResourceManager._populate_dbnames = mock_populate_dbnames
-
-        rm = ResourceManager( self.test_folder, self.tests, False )
-        self.assertTrue( 2, len( rm.dbnames ) )
-        for t in self.tests:
-            tid = t['id']
-            self.assertEqual( rm.get_dbname( tid ), "mockDBName%s"%tid )
+        rm = ResourceManager( resource_folder, self.tests, use_preloaded_resources, mock_use_config() )
 
 if __name__ == '__main__':
     unittest.main()

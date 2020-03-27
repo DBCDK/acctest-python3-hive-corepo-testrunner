@@ -118,6 +118,7 @@ class ResourceManager( AbstractResourceManager ):
         self.use_preloaded_resources = use_preloaded
 
         self.use_config_resources = use_config
+
         self.resource_config = ConfigObj(self.use_config_resources)
 
         self.container_pool = ContainerPoolImpl(resource_folder)
@@ -155,10 +156,6 @@ class ResourceManager( AbstractResourceManager ):
 
         logger.debug("Using preloaded %s artifact"%artifact)
         preloaded_artifact = os.path.join(self.resource_folder, artifact)
-        preloaded_md5 = preloaded_artifact + ".md5"
-        artifact_OK = self._verify_md5(preloaded_artifact, preloaded_md5)
-        if not artifact_OK:
-            die("artifact %s could not be verified by md5file %s"%(preloaded_artifact, preloaded_md5))
 
         return preloaded_artifact
 
