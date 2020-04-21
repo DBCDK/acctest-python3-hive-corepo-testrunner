@@ -73,7 +73,7 @@ class TestRunner( AbstractTestRunner ):
             wiremock = container_suite.get("wiremock", build_folder)
 
             # connectors
-            ingest_tool = os.path.join(resource_manager.resource_folder, 'corepo-ingest-1.1-SNAPSHOT.jar')
+            ingest_tool = os.path.join(resource_manager.resource_folder, 'corepo-ingest.jar')
             corepo_db_root = "corepo:corepo@%s:5432/corepo" % corepo_db.get_ip()
 
             corepo_connector = Corepo(corepo_db, corepo_content_service, ingest_tool, os.path.join(build_folder, 'ingest'))

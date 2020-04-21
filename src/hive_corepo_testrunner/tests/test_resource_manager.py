@@ -5,7 +5,6 @@ import logging
 import os
 import pkg_resources
 import shutil
-import subprocess
 import sys
 import tempfile
 import unittest
@@ -66,19 +65,11 @@ class TestResourceManager( unittest.TestCase ):
         ResourceManager._secure_artifact = mock_secure
         ResourceManager._populate_dbnames = mock_populate_dbnames
 
-        com_mock = Mock()
-        com_mock.communicate.return_value = ( '<stdout>', '<stderr>' )
-        com_mock.returncode = 0
-        org_sp = subprocess.Popen
-        subprocess.Popen = Mock( return_value=com_mock )
-
         #test
         resource_folder = os.path.join( self.test_folder, "resources" )
         self.assertFalse( os.path.exists( resource_folder ) )
         rm = ResourceManager( resource_folder, self.tests, False, mock_use_config() )
         self.assertTrue( os.path.exists( resource_folder ) )
-
-        subprocess.Popen = org_sp
 
     def test_that_resource_folder_is_present_after_init( self ):
         """ Test whether the resource folder is present after initialization, if where there already.
@@ -87,20 +78,12 @@ class TestResourceManager( unittest.TestCase ):
         ResourceManager._secure_artifact = mock_secure
         ResourceManager._populate_dbnames = mock_populate_dbnames
 
-        com_mock = Mock()
-        com_mock.communicate.return_value = ( '<stdout>', '<stderr>' )
-        com_mock.returncode = 0
-        org_sp = subprocess.Popen
-        subprocess.Popen = Mock( return_value=com_mock )
-
         #test
         resource_folder = os.path.join( self.test_folder, "resources" )
         os.mkdir( resource_folder )
         self.assertTrue( os.path.exists( resource_folder ) )
         rm = ResourceManager( resource_folder, self.tests, False, mock_use_config() )
         self.assertTrue( os.path.exists( resource_folder ) )
-
-        subprocess.Popen = org_sp
 
     def test_iserver_used_when_failing_to_find_preloaded_artifact( self ):
         """ Tests whether the iserver is used to retrieve artifact when failing to find preloaded.
@@ -110,17 +93,9 @@ class TestResourceManager( unittest.TestCase ):
         IServer.__init__ = mock_iserver_init
         IServer.download_and_validate_artifact = mock_dava
 
-        com_mock = Mock()
-        com_mock.communicate.return_value = ( '<stdout>', '<stderr>' )
-        com_mock.returncode = 0
-        org_sp = subprocess.Popen
-        subprocess.Popen = Mock( return_value=com_mock )
-
         use_preloaded_resources = True
 
         rm = ResourceManager( self.test_folder, self.tests, use_preloaded_resources, mock_use_config()  )
-
-        subprocess.Popen = org_sp
 
         expected_is_url = "DEFAULT"
         expected_project_name = 'mock-project-head'
@@ -130,12 +105,6 @@ class TestResourceManager( unittest.TestCase ):
         """
         ResourceManager._get_dependencies = mock_get_dependencies
         ResourceManager._populate_dbnames = mock_populate_dbnames
-
-        com_mock = Mock()
-        com_mock.communicate.return_value = ( '<stdout>', '<stderr>' )
-        com_mock.returncode = 0
-        org_sp = subprocess.Popen
-        subprocess.Popen = Mock( return_value=com_mock )
 
         resource_folder = os.path.join( self.test_folder, "resources" )
         os.mkdir( resource_folder )
@@ -151,8 +120,6 @@ class TestResourceManager( unittest.TestCase ):
         use_preloaded_resources = True
 
         rm = ResourceManager( resource_folder, self.tests, use_preloaded_resources, mock_use_config() )
-
-        subprocess.Popen = org_sp
 
 if __name__ == '__main__':
     unittest.main()
