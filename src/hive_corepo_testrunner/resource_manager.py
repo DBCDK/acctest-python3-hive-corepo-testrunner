@@ -36,9 +36,10 @@ logger.addHandler( NullHandler() )
 
 class ContainerPoolImpl(ContainerSuitePool):
 
-    def __init__(self, resource_folder):
+    def __init__(self, resource_folder, resource_config):
         super(ContainerPoolImpl, self).__init__()
         self.resource_folder = resource_folder
+        self.resource_config = resource_config
 
     def create_suite(self, suite):
         suite_name = "_hive_corepo_%f" % time.time()
@@ -71,7 +72,11 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                                                "READONLY": "False",
                                                                                "PAYARA_STARTUP_TIMEOUT": 1200},
                                                         start_timeout=1200)
-
+        volumes = None
+        use_local_javascript = "false"
+        if 'local_javascript' in self.resource_config:
+            volumes = {self.resource_config['local_javascript']: '/data/javascript/'}
+            use_local_javascript = "true"
 
         hive = suite.create_container("hive",
                                       image_name=DockerContainer.secure_docker_image('hive-app-1.0-snapshot'),
@@ -85,7 +90,9 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                              "OPENAGENCY_URL": "http://%s:8080" % wiremock.get_ip(),
                                                              "HIVE_POOLSIZE": 1,
                                                              "HARVEST_POLLINTERVAL":2,
-                                                             "LOG__dk_dbc": "TRACE"},
+                                                             "LOG__dk_dbc": "TRACE",
+                                                             "USE_LOCAL_JAVASCRIPT": use_local_javascript},
+                                      volumes=volumes,
                                       start_timeout=1200)
 
         corepo_content_service.start()
@@ -107,7 +114,6 @@ class ContainerPoolImpl(ContainerSuitePool):
 class ResourceManager( AbstractResourceManager ):
 
     def __init__( self, resource_folder, tests, use_preloaded, use_config, conf_file=None ):
-
         logger.info( "Securing necessary resources." )
         self.tests = tests
 
@@ -121,7 +127,7 @@ class ResourceManager( AbstractResourceManager ):
 
         self.resource_config = ConfigObj(self.use_config_resources)
 
-        self.container_pool = ContainerPoolImpl(resource_folder)
+        self.container_pool = ContainerPoolImpl(resource_folder, self.resource_config)
 
         self.required_artifacts = {'wiremock-rules-openagency': ['wiremock-rules-openagency.zip', 'os-wiremock-rules'], 'corepo-ingest': ['corepo-ingest.jar', 'corepo/job/master']}
         for artifact in self.required_artifacts:
