@@ -72,26 +72,26 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                                                "READONLY": "False",
                                                                                "PAYARA_STARTUP_TIMEOUT": 1200},
                                                         start_timeout=1200)
+        hive_env_vars = {"REPOSITORY_URL": "jdbc:postgresql://corepo:corepo@%s:5432/corepo" % corepo_db.get_ip(),
+                        "HARVEST_MODE": "SERVER",
+                        "HARVEST_HARVESTER": "ESFileRecordFeeder",
+                        "HOLDINGSDB_URL": "",
+                        "ADDISERVICE_URL": "",
+                        "BATCHEXCHANGE_JDBCURL": "",
+                        "OPENAGENCY_URL": "http://%s:8080" % wiremock.get_ip(),
+                        "HIVE_POOLSIZE": 1,
+                        "HARVEST_POLLINTERVAL":2,
+                        "LOG__dk_dbc": "TRACE"}
+
         volumes = None
-        use_local_javascript = "false"
         if 'local_javascript' in self.resource_config:
             volumes = {self.resource_config['local_javascript']: '/data/javascript/'}
-            use_local_javascript = "true"
+            hive_env_vars["USE_LOCAL_JAVASCRIPT"] = "true"
 
         hive = suite.create_container("hive",
                                       image_name=DockerContainer.secure_docker_image('hive-app-1.0-snapshot'),
                                       name="hive" + suite_name,
-                                      environment_variables={"REPOSITORY_URL": "jdbc:postgresql://corepo:corepo@%s:5432/corepo" % corepo_db.get_ip(),
-                                                             "HARVEST_MODE": "SERVER",
-                                                             "HARVEST_HARVESTER": "ESFileRecordFeeder",
-                                                             "HOLDINGSDB_URL": "",
-                                                             "ADDISERVICE_URL": "",
-                                                             "BATCHEXCHANGE_JDBCURL": "",
-                                                             "OPENAGENCY_URL": "http://%s:8080" % wiremock.get_ip(),
-                                                             "HIVE_POOLSIZE": 1,
-                                                             "HARVEST_POLLINTERVAL":2,
-                                                             "LOG__dk_dbc": "TRACE",
-                                                             "USE_LOCAL_JAVASCRIPT": use_local_javascript},
+                                      environment_variables=hive_env_vars,
                                       volumes=volumes,
                                       start_timeout=1200)
 
