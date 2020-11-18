@@ -26,10 +26,7 @@ from os_python.corepo.corepo_parser import CorepoParser
 
 from os_python.hive.hive_parser import HiveParser
 
-from os_python.openagency_parser import OpenAgencyParser
-
 from os_python.connectors.hive import HiveDockerConnector
-from os_python.connectors.openagency_mock import OpenAgencyMock
 
 from os_python.common.utils.init_functions import NullHandler
 from os_python.common.utils.cleanupstack import CleanupStack
@@ -79,12 +76,10 @@ class TestRunner( AbstractTestRunner ):
             corepo_connector = Corepo(corepo_db, corepo_content_service, ingest_tool, os.path.join(build_folder, 'ingest'))
 
             hive_connector = HiveDockerConnector(hive)
-            openagency_connector = OpenAgencyMock("http://%s:8080" % wiremock.get_ip(), proxy="https://openagency.addi.dk/test_2.34/")
 
             ### Setup parsers
             self.parser_functions.update(CorepoParser(self.base_folder, corepo_connector).parser_functions)
             self.parser_functions.update(HiveParser(self.base_folder, hive_connector).parser_functions)
-            self.parser_functions.update(OpenAgencyParser(openagency_connector).parser_functions)
 
             ### run the test
             stop_stack = CleanupStack.getInstance()

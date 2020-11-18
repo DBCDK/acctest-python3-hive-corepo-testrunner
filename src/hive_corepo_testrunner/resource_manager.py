@@ -26,7 +26,7 @@ from os_python.docker.docker_container import DockerContainer
 from os_python.docker.docker_container import ContainerSuitePool
 from os_python.connectors.postgres import PostgresDockerConnector
 
-from os_python.wiremock_helper import wiremock_load_rules_from_dir
+from os_python.wiremock_helper import wiremock_load_vipcore_from_dir
 
 from configobj import ConfigObj
 
@@ -50,6 +50,8 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                     "POSTGRES_PASSWORD": "corepo",
                                                     "POSTGRES_DB": "corepo"},
                              start_timeout=1200)
+
+
         wiremock = suite.create_container("wiremock", image_name=DockerContainer.secure_docker_image('os-wiremock-1.0-snapshot'),
                              name="wiremock" + suite_name,
                              start_timeout=1200)
@@ -57,16 +59,17 @@ class ContainerPoolImpl(ContainerSuitePool):
         corepo_db.start()
         corepo_db.waitFor("database system is ready to accept connections")
         wiremock.waitFor("verbose:")
+        vip_url = "http://%s:8080" % wiremock.get_ip()
 
         corepo_db_root = "corepo:corepo@%s:5432/corepo" % corepo_db.get_ip()
 
-        wiremock_load_rules_from_dir("http://%s:8080" % wiremock.get_ip(), self.resource_folder)
+        wiremock_load_vipcore_from_dir("http://%s:8080" % wiremock.get_ip(), self.resource_folder)
 
         corepo_content_service = suite.create_container("corepo-content-service",
                                                         image_name=DockerContainer.secure_docker_image('corepo-content-service-1.2'),
                                                         name="corepo-content-service" + suite_name,
                                                         environment_variables={"COREPO_POSTGRES_URL": corepo_db_root,
-                                                                               "VIPCORE_ENDPOINT": "http://vipcore.iscrum-vip-extern-test.svc.cloud.dbc.dk/1.0/api/",
+                                                                               "VIPCORE_ENDPOINT": vip_url,
                                                                                "LOG__dk_dbc": "TRACE",
                                                                                "JAVA_MAX_HEAP_SIZE": "2G",
                                                                                "READONLY": "False",
@@ -78,7 +81,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                         "HOLDINGSDB_URL": "",
                         "ADDISERVICE_URL": "",
                         "BATCHEXCHANGE_JDBCURL": "",
-                        "VIPCORE_ENDPOINT": "http://vipcore.iscrum-vip-extern-test.svc.cloud.dbc.dk/1.0/api/",
+                        "VIPCORE_ENDPOINT": vip_url,
                         "HIVE_POOLSIZE": 1,
                         "HARVEST_POLLINTERVAL":2,
                         "LOG__dk_dbc": "TRACE"}
@@ -129,7 +132,7 @@ class ResourceManager( AbstractResourceManager ):
 
         self.container_pool = ContainerPoolImpl(resource_folder, self.resource_config)
 
-        self.required_artifacts = {'wiremock-rules-openagency': ['wiremock-rules-openagency.zip', 'os-wiremock-rules'], 'corepo-ingest': ['corepo-ingest.jar', 'corepo/job/master']}
+        self.required_artifacts = {'wiremock-vipcore': ['wiremock-vipcore.zip', 'os-wiremock-rules'], 'corepo-ingest': ['corepo-ingest.jar', 'corepo/job/master']}
         for artifact in self.required_artifacts:
             self.required_artifacts[artifact].append(self._secure_artifact(artifact, *self.required_artifacts[artifact]))
 
