@@ -72,7 +72,6 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                                                "VIPCORE_ENDPOINT": vip_url,
                                                                                "LOG__dk_dbc": "TRACE",
                                                                                "JAVA_MAX_HEAP_SIZE": "2G",
-                                                                               "READONLY": "False",
                                                                                "PAYARA_STARTUP_TIMEOUT": 1200},
                                                         start_timeout=1200)
         hive_env_vars = {"REPOSITORY_URL": "jdbc:postgresql://corepo:corepo@%s:5432/corepo" % corepo_db.get_ip(),
