@@ -77,7 +77,6 @@ class ContainerPoolImpl(ContainerSuitePool):
         hive_env_vars = {"REPOSITORY_URL": "jdbc:postgresql://corepo:corepo@%s:5432/corepo" % corepo_db.get_ip(),
                         "HARVEST_MODE": "SERVER",
                         "HARVEST_HARVESTER": "ESFileRecordFeeder",
-                        "HOLDINGSDB_URL": "",
                         "ADDISERVICE_URL": "",
                         "BATCHEXCHANGE_JDBCURL": "",
                         "VIPCORE_ENDPOINT": vip_url,
