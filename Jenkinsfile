@@ -7,7 +7,7 @@
 def python3ImageVersion = findLastSuccessfulBuildNumber('Docker-base-debian-python3/job/master')
 
 def ownerEmail = "de-team@dbc.dk"
-def ownerSlack = "de-team"
+def ownerSlack = "de-notifications"
 
 properties([
     disableConcurrentBuilds(),
@@ -25,7 +25,7 @@ pipeline {
     agent {
         docker {
             label 'devel10'
-            image "docker.dbc.dk/dbc-debian-python3:${python3ImageVersion}"
+            image "docker-dbc.artifacts.dbccloud.dk/dbc-debian-python3:${python3ImageVersion}"
             args '-u 0:0'
         }
     }
