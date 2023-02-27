@@ -52,7 +52,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                              start_timeout=1200)
 
 
-        wiremock = suite.create_container("wiremock", image_name=DockerContainer.secure_docker_image('os-wiremock-1.0-snapshot'),
+        wiremock = suite.create_container("wiremock", image_name=DockerContainer.secure_docker_image('wiremock'),
                              name="wiremock" + suite_name,
                              start_timeout=1200)
         wiremock.start()
