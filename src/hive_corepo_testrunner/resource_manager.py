@@ -86,8 +86,7 @@ class ContainerPoolImpl(ContainerSuitePool):
 
         volumes = None
         if 'local_javascript' in self.resource_config:
-            volumes = {self.resource_config['local_javascript']: '/data/javascript/'}
-            hive_env_vars["USE_LOCAL_JAVASCRIPT"] = "true"
+            volumes = {self.resource_config['local_javascript']: '/javascript'}
 
         hive = suite.create_container("hive",
                                       image_name=DockerContainer.secure_docker_image('hive-app-1.0-snapshot'),
