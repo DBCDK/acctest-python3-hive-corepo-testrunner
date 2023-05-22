@@ -75,9 +75,11 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                                                "PAYARA_STARTUP_TIMEOUT": 1200},
                                                         start_timeout=1200)
 
+        volumes = None
         hive_jsar = '/nashorn-js-hive.jsar'
         if 'local_javascript' in self.resource_config:
-            hive_jsar = self.resource_config['local_javascript']
+            volumes = {self.resource_config['local_javascript']: '/local.jsar'}
+            hive_jsar = '/local.jsar'
 
         hive_env_vars = {"REPOSITORY_URL": "jdbc:postgresql://corepo:corepo@%s:5432/corepo" % corepo_db.get_ip(),
                         "HARVEST_MODE": "SERVER",
@@ -94,6 +96,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                                       image_name=DockerContainer.secure_docker_image('hive-app'),
                                       name="hive" + suite_name,
                                       environment_variables=hive_env_vars,
+                                      volumes=volumes,
                                       start_timeout=1200)
 
         corepo_content_service.start()
