@@ -74,6 +74,13 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                                                "JAVA_MAX_HEAP_SIZE": "2G",
                                                                                "PAYARA_STARTUP_TIMEOUT": 1200},
                                                         start_timeout=1200)
+
+        volumes = None
+        hive_jsar = '/nashorn-js-hive.jsar'
+        if 'local_javascript' in self.resource_config:
+            volumes = {self.resource_config['local_javascript']: '/local.jsar'}
+            hive_jsar = '/local.jsar'
+
         hive_env_vars = {"REPOSITORY_URL": "jdbc:postgresql://corepo:corepo@%s:5432/corepo" % corepo_db.get_ip(),
                         "HARVEST_MODE": "SERVER",
                         "HARVEST_HARVESTER": "ESFileRecordFeeder",
@@ -81,15 +88,12 @@ class ContainerPoolImpl(ContainerSuitePool):
                         "BATCHEXCHANGE_JDBCURL": "",
                         "VIPCORE_ENDPOINT": vip_url,
                         "HIVE_POOLSIZE": 1,
+                        "HIVE_PROCESSORJSAR": hive_jsar,
                         "HARVEST_POLLINTERVAL":2,
                         "LOG__dk_dbc": "TRACE"}
 
-        volumes = None
-        if 'local_javascript' in self.resource_config:
-            volumes = {self.resource_config['local_javascript']: '/javascript'}
-
         hive = suite.create_container("hive",
-                                      image_name=DockerContainer.secure_docker_image('hive-app-1.0-snapshot'),
+                                      image_name=DockerContainer.secure_docker_image('hive-app'),
                                       name="hive" + suite_name,
                                       environment_variables=hive_env_vars,
                                       volumes=volumes,
