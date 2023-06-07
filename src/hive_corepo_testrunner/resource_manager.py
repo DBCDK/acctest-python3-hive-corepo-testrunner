@@ -70,7 +70,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                         name="corepo-content-service" + suite_name,
                                                         environment_variables={"COREPO_POSTGRES_URL": corepo_db_root,
                                                                                "VIPCORE_ENDPOINT": vip_url,
-                                                                               "LOG__dk_dbc": "TRACE",
+                                                                               "LOG__dk_dbc": "DEBUG",
                                                                                "JAVA_MAX_HEAP_SIZE": "2G",
                                                                                "PAYARA_STARTUP_TIMEOUT": 1200},
                                                         start_timeout=1200)
@@ -90,7 +90,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                         "HIVE_POOLSIZE": 1,
                         "HIVE_PROCESSORJSAR": hive_jsar,
                         "HARVEST_POLLINTERVAL":2,
-                        "LOG__dk_dbc": "TRACE"}
+                        "LOG__dk_dbc": "DEBUG"}
 
         hive = suite.create_container("hive",
                                       image_name=DockerContainer.secure_docker_image('hive-app'),
