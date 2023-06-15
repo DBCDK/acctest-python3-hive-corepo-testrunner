@@ -90,7 +90,9 @@ class ContainerPoolImpl(ContainerSuitePool):
                         "HIVE_POOLSIZE": 1,
                         "HIVE_PROCESSORJSAR": hive_jsar,
                         "HARVEST_POLLINTERVAL":2,
-                        "LOG__dk_dbc": "DEBUG"}
+                        "LOG__JavaScript_Logger": "TRACE",
+                        "LOG__dk_dbc_opensearch_hive": "DEBUG",
+                        "LOG__dk_dbc": "INFO"}
 
         hive = suite.create_container("hive",
                                       image_name=DockerContainer.secure_docker_image('hive-app'),
